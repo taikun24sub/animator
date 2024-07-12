@@ -6,7 +6,7 @@
       <h1>Animator.js</h1>
     </div>
     <div class="main">
-      <canvas width="1000" height="700"></canvas>
+      <canvas width="1000" height="700" id="canvas"></canvas>
     </div>
     <style>
       body{
@@ -23,5 +23,22 @@
         height:90%;width:100%;
       }
     </style>
+    <noscript>JavaScript disabled.</noscript>
+    <script>
+      let canvas = document.getElementById("canvas");
+      let x,y = 0;
+      canvas.addEventListener('mousemove', function (evt) {
+        var rect = canvas.getBoundingClientRect();
+        var mousePos = getMousePosition(canvas, evt);
+        let nx=evt.clientX - rect.left;
+        let ny=evt.clientY - rect.top;
+      });
+      canvas.addEventListener('mousedown', function (evt) {
+        var rect = canvas.getBoundingClientRect();
+        var mousePos = getMousePosition(canvas, evt);
+        x=evt.clientX - rect.left;
+        y=evt.clientY - rect.top;
+      });
+    </script>
   </body>
 </html>
