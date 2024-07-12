@@ -26,12 +26,17 @@
     <noscript>JavaScript disabled.</noscript>
     <script>
       let canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
       let x,y = 0;
       canvas.addEventListener('mousemove', function (evt) {
         var rect = canvas.getBoundingClientRect();
         var mousePos = getMousePosition(canvas, evt);
         let nx=evt.clientX - rect.left;
         let ny=evt.clientY - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+        ctx.lineTo(nx,ny);
+        ctx.stroke();
       });
       canvas.addEventListener('mousedown', function (evt) {
         var rect = canvas.getBoundingClientRect();
