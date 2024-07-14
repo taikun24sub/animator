@@ -36,6 +36,7 @@
         ctx.beginPath();
         ctx.moveTo(x,y);
         ctx.lineTo(nx,ny);
+        ctx.closePath();
         ctx.stroke();
       });
       canvas.addEventListener('mousedown', function (evt) {
