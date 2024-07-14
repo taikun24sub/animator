@@ -1,9 +1,13 @@
 <html>
-
   <head><title>Animator.js</title></head>
   <body>
     <div class="tools">
       <h1>Animator.js</h1>
+      <button onclick="cl();">Clear</button>
+      <div class="pen">
+        <input type="color" id="color">
+        <input type="number" id="wg" value="1">
+      </div>
     </div>
     <div class="main">
       <canvas width="1000" height="700" id="canvas"></canvas>
@@ -18,9 +22,23 @@
       .tools{
         height:10%;width:100%;
         background-color:#d3ffd1;
+        display: flex;
+            align-items: center;
+
       }
       .main{
         height:90%;width:100%;
+      }
+      #canvas{
+        cursor: crosshair ;
+      }
+      .pen{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #wg{
+        width: 50px;
       }
     </style>
     <noscript>JavaScript disabled.</noscript>
@@ -28,22 +46,39 @@
       let canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
       let x,y = 0;
+      let mdown = false;
       canvas.addEventListener('mousemove', function (evt) {
-        var rect = canvas.getBoundingClientRect();
-        var mousePos = getMousePosition(canvas, evt);
-        let nx=evt.clientX - rect.left;
-        let ny=evt.clientY - rect.top;
-        ctx.beginPath();
-        ctx.moveTo(x,y);
-        ctx.lineTo(nx,ny);
-        ctx.closePath();
-        ctx.stroke();
+        if(mdown){
+          var rect = canvas.getBoundingClientRect();
+          let nx=evt.clientX - rect.left;
+          let ny=evt.clientY - rect.top;
+          ctx.beginPath();
+          ctx.moveTo(x,y);
+          ctx.lineTo(nx,ny);
+          ctx.closePath();
+          ctx.stroke();
+          x = nx;
+          y = ny;
+        }
       });
       canvas.addEventListener('mousedown', function (evt) {
+        mdown = true;
         var rect = canvas.getBoundingClientRect();
-        var mousePos = getMousePosition(canvas, evt);
         x=evt.clientX - rect.left;
         y=evt.clientY - rect.top;
+      });
+      canvas.addEventListener('mouseup', function(evt){
+        mdown = false;
+        ctx.save();
+      });
+      function cl(){
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+      }
+      document.getElementById('color').addEventListener('change', function(event){
+          ctx.strokeStyle = event.target.value;
+      });
+      document.getElementById('wg').addEventListener('change', function(event){
+        ctx.lineWidth = event.target.value;
       });
     </script>
   </body>
