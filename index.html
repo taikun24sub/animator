@@ -1,16 +1,28 @@
 <html>
   <head><title>Animator.js</title></head>
   <body>
-    <div class="tools">
-      <h1>Animator.js</h1>
-      <button onclick="cl();">Clear</button>
-      <div class="pen">
-        <input type="color" id="color">
-        <input type="number" id="wg" value="1">
+    <main>
+      <div class="tools">
+        <h1>Animator.js</h1>
+        <noscript>JavaScript disabled.JavaScript(プログラム)が無効です。</noscript>
+        <button onclick="pr('block');">Projects</button>
+        <div class="pen">
+          <input type="color" id="color">
+          <input type="number" id="wg" value="1">
+        </div>
+        <button onclick="cl();">Clear</button>
+        <button onclick="next();">New Frame</button>
       </div>
-    </div>
-    <div class="main">
-      <canvas width="1000" height="700" id="canvas"></canvas>
+      <div class="main">
+        <canvas width="1000" height="700" id="shadow"></canvas>
+        <canvas width="1000" height="700" id="canvas"><h1>Canvas disabled.Canvas要素(画像表示)が無効です。</h1></canvas>
+      </div>
+    </main>
+    <div class="overlay" style="display: none;">
+      <h1>Projects</h1>
+      <button onclick="pr('none');">Close Overlay</button>
+      <div style="display:flex;"><input type="text" id="pname"><button onclick="new_project(document.getElementById('pname').value);">New Project</button></div>
+      <button onclick="if (window.confirm('本当に削除しますか？\nDO YOU REALLY WANT TO ERASE ALL PROJECTS?')) {remove_projects();}"><b>!WARNING!</b> Clear Projects</button>
     </div>
     <style>
       body{
@@ -31,6 +43,9 @@
       }
       #canvas{
         cursor: crosshair ;
+        position: relative;
+        left: 0px;
+        top: -700px;
       }
       .pen{
         display: flex;
@@ -40,18 +55,28 @@
       #wg{
         width: 50px;
       }
+      .overlay{
+        position: absolute;
+        top: 5%; left: 5%;
+        background-color: lightblue;
+        width: 90%;height: 90%;
+      }
     </style>
-    <noscript>JavaScript disabled.</noscript>
+    <script type="text/javascript" src="storagemanager.js"></script>
     <script>
       let canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
       let x,y = 0;
       let mdown = false;
-      canvas.addEventListener('mousemove', function (evt) {
+      let animations = [];
+      let move = function (evt){
         if(mdown){
+          if(evt.touches == undefined){
+            evt.touches = [{"clientX":evt.clientX, "clientY": evt.clientY}];
+          }
           var rect = canvas.getBoundingClientRect();
-          let nx=evt.clientX - rect.left;
-          let ny=evt.clientY - rect.top;
+          let nx=evt.touches[0].clientX - rect.left;
+          let ny=evt.touches[0].clientY - rect.top;
           ctx.beginPath();
           ctx.moveTo(x,y);
           ctx.lineTo(nx,ny);
@@ -60,17 +85,26 @@
           x = nx;
           y = ny;
         }
-      });
-      canvas.addEventListener('mousedown', function (evt) {
+      };
+      canvas.addEventListener('mousemove', move);
+      canvas.addEventListener('touchmove', move);
+      let start = function (evt) {
+        if(evt.touches == undefined){
+            evt.touches = [{"clientX":evt.clientX, "clientY" : evt.clientY}];
+          }
         mdown = true;
         var rect = canvas.getBoundingClientRect();
-        x=evt.clientX - rect.left;
-        y=evt.clientY - rect.top;
-      });
-      canvas.addEventListener('mouseup', function(evt){
+        x=evt.touches[0].clientX - rect.left;
+        y=evt.touches[0].clientY - rect.top;
+      };
+      canvas.addEventListener('touchstart', start);
+      canvas.addEventListener('mousedown', start);
+      let end = function(evt){
         mdown = false;
         ctx.save();
-      });
+      };
+      canvas.addEventListener('touchend', end);
+      canvas.addEventListener('mouseup', end);
       function cl(){
         ctx.clearRect(0,0,canvas.width, canvas.height);
       }
@@ -80,6 +114,28 @@
       document.getElementById('wg').addEventListener('change', function(event){
         ctx.lineWidth = event.target.value;
       });
+      function next(){
+        const data = canvas.toDataURL("image/png");
+        animations.push(data);
+        shadow();
+        cl();
+      }
+      function shadow(){
+          let sc = document.getElementById('shadow');
+          let sx = sc.getContext('2d');
+          sx.globalAlpha = 0.4;
+          sx.clearRect(0,0,sc.width,sc.height);
+          let image = new Image();
+          image.src = animations[animations.length - 1];
+          image.addEventListener('load', ()=>{
+            sx.drawImage(image,0,0);
+            sx.globalAlpha = 1;
+          });
+      }
+      function pr(f){
+          document.getElementsByClassName('overlay')[0].style.display = f;
+      }
+      open_latest();
     </script>
   </body>
 </html>
