@@ -1,17 +1,18 @@
 <html>
   <head><title>Animator.js</title></head>
   <body>
-    <main>
+    <main oncopy="return false" onpaste="return false" oncontextmenu="return false" l
+>
       <div class="tools">
         <h1>Animator.js</h1>
         <noscript>JavaScript disabled.JavaScript(プログラム)が無効です。</noscript>
-        <button onclick="pr('block');">Projects</button>
+        <button onclick="pr('block');">プロジェクト</button>
         <div class="pen">
           <input type="color" id="color">
           <input type="number" id="wg" value="1">
         </div>
-        <button onclick="cl();">Clear</button>
-        <button onclick="next();">New Frame</button>
+        <button onclick="cl();">クリア</button>
+        <button onclick="next();">新しいフレーム</button>
       </div>
       <div class="main">
         <canvas width="1000" height="700" id="shadow"></canvas>
